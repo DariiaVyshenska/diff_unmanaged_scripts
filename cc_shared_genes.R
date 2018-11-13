@@ -758,7 +758,7 @@ input_folder <- "./tables-all-ge-analysis"
 all_tables <- import_df_asList(input_folder)
 
 
-pval <- 0.01
+pval <- 0.001
 
 testA <- normaliz_matrix(all_tables_list=all_tables, puc = 
                            NULL, pval_threshold = pval, 
@@ -876,6 +876,24 @@ colnames(newGEvsPTem)[19:27] <- as.vector(paste(names(newGEvsPTem[,19:27]), "pva
   
 # exporting table
 write.csv(newGEvsPTem, "GEvsP_PUCpass.csv", row.names = F)
+#===============================================================================
+# Estimate ratio range for each KD-target
+#===============================================================================
+source("./cc_drivers_functions/ratioStat.R")
+input_folder <- "./tables-all-ge-analysis"
+all_tables <- import_df_asList(input_folder)
+
+
+matrixO1 <- normaliz_matrix(all_tables_list=all_tables, puc = 
+                           NULL, pval_threshold = 0.01, 
+                         fdr_threshold = F, normalization = "B")
+matrixOO1 <- normaliz_matrix(all_tables_list=all_tables, puc = 
+                               NULL, pval_threshold = 0.001, 
+                             fdr_threshold = F, normalization = "B")
+
+
+statO1 <- ratioStat(matrixO1, 0.01)
+statOO1 <- ratioStat(matrixOO1, 0.001)
 #===============================================================================
 # TEMP
 #===============================================================================
