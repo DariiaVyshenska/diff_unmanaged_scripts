@@ -879,7 +879,7 @@ write.csv(newGEvsPTem, "GEvsP_PUCpass.csv", row.names = F)
 #===============================================================================
 # Estimate ratio range for each KD-target
 #===============================================================================
-source("./cc_drivers_functions/ratioStat.R")
+source("D:/GitHub/R_scripts/cc_drivers_functions/ratioStat.R")
 input_folder <- "./tables-all-ge-analysis"
 all_tables <- import_df_asList(input_folder)
 
@@ -890,10 +890,22 @@ matrixO1 <- normaliz_matrix(all_tables_list=all_tables, puc =
 matrixOO1 <- normaliz_matrix(all_tables_list=all_tables, puc = 
                                NULL, pval_threshold = 0.001, 
                              fdr_threshold = F, normalization = "B")
+ncol(matrixO1)
+
+degs_df <- function(tables, pval){
+  deg_vec <- vector(length =  length(tables))
+  for(i in 1:length(tables)){
+    print(names(tables[i]))
+    deg_vec[i] <- sum(tables[[i]][["Parametric p-value"]] <= pval)
+  }
+  df <- data.frame("KDtarget" = names(tables), "DEGs" = deg_vec)
+  return(df)
+}
 
 
-statO1 <- ratioStat(matrixO1, 0.01)
-statOO1 <- ratioStat(matrixOO1, 0.001)
+statO1deg <- merge(ratioStat(matrixO1, 0.01), degs_df(all_tables, 0.01))
+statO1deg <- merge(ratioStat(matrixOO1, 0.001), degs_df(all_tables, 0.001))
+
 #===============================================================================
 # TEMP
 #===============================================================================
